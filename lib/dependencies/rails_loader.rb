@@ -1,4 +1,5 @@
 require 'dependencies/container'
+require 'dependencies/mutable_container'
 
 module Dependencies
   # Loads dependencies from config/dependencies.rb in Rails applications.
@@ -12,7 +13,10 @@ module Dependencies
     private
 
     def load
-      Dependencies::Container.new.instance_eval(config, config_path)
+      container =
+        Dependencies::MutableContainer.new(Dependencies::Container.new)
+      container.instance_eval(config, config_path)
+      container.build
     end
 
     def config
