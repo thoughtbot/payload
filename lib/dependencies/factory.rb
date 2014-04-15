@@ -10,7 +10,7 @@ module Dependencies
       @decorators = decorators
     end
 
-    def new(arguments)
+    def new(arguments = {})
       resolved =
         arguments.inject(@container) do |container, (argument, value)|
           container.service(argument) { value }
