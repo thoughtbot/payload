@@ -1,13 +1,16 @@
 require 'spec_helper'
 require 'dependencies/factory_definition'
+require 'dependencies/testing'
 
 describe Dependencies::FactoryDefinition do
+  include Dependencies::Testing
+
   describe '#resolve' do
     it 'returns an object that responds to new' do
       block = lambda do |config|
         "#{config[:from_new]} and #{config[:from_container]}"
       end
-      container = Dependencies::Container.new
+      container = build_container
         .service(:from_container) { 'From container' }
       definition = Dependencies::FactoryDefinition.new(block)
 
@@ -28,7 +31,7 @@ describe Dependencies::FactoryDefinition do
       second = lambda do |component, config|
         "#{component} and #{config[:other]}"
       end
-      container = Dependencies::Container.new
+      container = build_container
         .service(:from_container) { 'From container' }
         .service(:other) { 'Other' }
       definition = Dependencies::FactoryDefinition

@@ -1,9 +1,11 @@
 require 'spec_helper'
 require 'dependencies/factory'
 require 'dependencies/decorator_chain'
-require 'dependencies/container'
+require 'dependencies/testing'
 
 describe Dependencies::Factory do
+  include Dependencies::Testing
+
   describe '#new' do
     it 'instantiates the dependency' do
       decorator = lambda do |component, config|
@@ -15,7 +17,7 @@ describe Dependencies::Factory do
         "Component with #{config[:from_container]} and #{config[:from_new]}"
       end
       decorators = Dependencies::DecoratorChain.new.add(decorator)
-      container = Dependencies::Container.new
+      container = build_container
         .service(:from_container) { 'From container' }
       factory = Dependencies::Factory.new(container, block, decorators)
 
@@ -32,7 +34,7 @@ describe Dependencies::Factory do
         "Component with #{config[:from_container]}"
       end
       decorators = Dependencies::DecoratorChain.new
-      container = Dependencies::Container.new
+      container = build_container
         .service(:from_container) { 'From container' }
       factory = Dependencies::Factory.new(container, block, decorators)
 

@@ -1,11 +1,13 @@
 require 'spec_helper'
 require 'dependencies/container'
+require 'dependencies/testing'
 
 describe Dependencies::Container do
+  include Dependencies::Testing
+
   describe '#factory' do
     it 'returns an object that responds to new' do
-      container = Dependencies::Container
-        .new
+      container = build_container
         .service(:from_container) { |config| 'From container' }
         .factory(:example) do |config|
           "#{config[:from_new]} and #{config[:from_container]}"
@@ -17,17 +19,16 @@ describe Dependencies::Container do
     end
   end
 
-  describe '#serrvice' do
+  describe '#service' do
     it 'returns a container with the given dependency defined' do
-      container = Dependencies::Container
-        .new
+      container = build_container
         .service(:example) { |config| 'expected result' }
 
       expect(container[:example]).to eq('expected result')
     end
 
     it "doesn't mutate the container" do
-      original = Dependencies::Container.new
+      original = build_container
       original.service(:example) { |config| 'expected result' }
 
       expect { original[:example] }
@@ -35,8 +36,7 @@ describe Dependencies::Container do
     end
 
     it 'provides access to other dependencies' do
-      container = Dependencies::Container
-        .new
+      container = build_container
         .service(:example) { |config| "got #{config[:dependency].inspect}" }
         .service(:dependency) { |config| 'expected result' }
 
@@ -46,8 +46,7 @@ describe Dependencies::Container do
 
   describe '#decorate' do
     it 'returns a container with the given dependency decorated' do
-      container = Dependencies::Container
-        .new
+      container = build_container
         .service(:example) { |config| 'expected component' }
         .decorate(:example) do |component, config|
           "decorated #{component.inspect} with #{config[:param].inspect}"
@@ -61,8 +60,7 @@ describe Dependencies::Container do
     end
 
     it "doesn't mutate the container" do
-      original = Dependencies::Container
-        .new
+      original = build_container
         .service(:example) { |config| 'expected component' }
       original
         .decorate(:example) { |component, config| "decorated #{component}" }
@@ -71,7 +69,7 @@ describe Dependencies::Container do
     end
 
     it 'raises an exception for an unknown dependency' do
-      container = Dependencies::Container.new
+      container = build_container
 
       expect { container.decorate(:anything) }
         .to raise_error(Dependencies::UndefinedDependencyError)
@@ -81,7 +79,7 @@ describe Dependencies::Container do
   describe '#[]' do
     context 'with an undefined dependency' do
       it 'raises an undefined dependency error' do
-        container = Dependencies::Container.new
+        container = build_container
 
         expect { container[:undefined] }.to raise_error(
           Dependencies::UndefinedDependencyError,

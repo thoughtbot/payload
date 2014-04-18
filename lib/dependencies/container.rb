@@ -1,4 +1,3 @@
-require 'dependencies/undefined_dependency_error'
 require 'dependencies/factory_definition'
 require 'dependencies/service_definition'
 
@@ -7,7 +6,7 @@ module Dependencies
   #
   # Use RackContainer to inject a container into Rack requests.
   class Container
-    def initialize(definitions = {})
+    def initialize(definitions)
       @definitions = definitions
     end
 
@@ -16,8 +15,8 @@ module Dependencies
     # The block will be given the current definition and the container as
     # arguments.
     def decorate(dependency, &block)
-      decorated = lookup(dependency).decorate(block)
-      self.class.new(@definitions.merge(dependency => decorated))
+      decorated = @definitions.find(dependency).decorate(block)
+      define dependency, decorated
     end
 
     # Defines a factory which can be used to instantiate the dependency. Useful
@@ -45,21 +44,13 @@ module Dependencies
     # Resolves a dependency. An unknown dependency will result in an
     # UndefinedDependencyError.
     def [](dependency)
-      lookup(dependency).resolve(self)
+      @definitions.find(dependency).resolve(self)
     end
 
     private
 
     def define(dependency, definition)
-      self.class.new(@definitions.merge(dependency => definition))
-    end
-
-    def lookup(dependency)
-      @definitions[dependency] ||
-        raise(
-          UndefinedDependencyError,
-          "No definition for dependency: #{dependency}"
-        )
+      self.class.new(@definitions.add(dependency, definition))
     end
   end
 end

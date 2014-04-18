@@ -1,8 +1,12 @@
+require 'dependencies/empty_definition_list'
+require 'dependencies/definition_list'
+require 'dependencies/container'
+
 module Dependencies
   module Testing
     def setup_controller_request_and_response
       super
-      @request.env[:dependencies] = Dependencies::Container.new
+      @request.env[:dependencies] = build_container
     end
 
     # Stubs a factory which will be instantiated with the given attributes.
@@ -57,6 +61,10 @@ module Dependencies
     # session.
     def dependencies
       @request.env[:dependencies]
+    end
+
+    def build_container
+      Container.new(DefinitionList.new(EmptyDefinitionList.new))
     end
   end
 end

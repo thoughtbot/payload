@@ -1,3 +1,5 @@
+require 'dependencies/empty_definition_list'
+require 'dependencies/definition_list'
 require 'dependencies/container'
 require 'dependencies/mutable_container'
 
@@ -13,8 +15,13 @@ module Dependencies
     private
 
     def load
-      container =
-        Dependencies::MutableContainer.new(Dependencies::Container.new)
+      container = MutableContainer.new(
+        Container.new(
+          DefinitionList.new(
+            EmptyDefinitionList.new
+          )
+        )
+      )
       container.instance_eval(config, config_path)
       container.build
     end
