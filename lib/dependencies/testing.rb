@@ -3,16 +3,27 @@ require 'dependencies/definition_list'
 require 'dependencies/container'
 
 module Dependencies
+  # Helper methods for stubbing and injecting dependencies into unit tests.
+  #
+  # These methods are intended for rspec controller tests and require
+  # rspec-mocks to work as expected. During capybara tests, all dependencies
+  # are available as defined in +config/dependencies.rb+.
   module Testing
+    # Builds an empty {Container} in the fake Rack environment.
+    #
+    # @api private
     def setup_controller_request_and_response
       super
       @request.env[:dependencies] = build_container
     end
 
-    # Stubs a factory which will be instantiated with the given attributes.
+    # Finds or injects a stubbed factory into the test {Container} and stubs an
+    # instance to be created with the given attributes.
     #
-    # Returns the result of the factory, which can then have additional stubs
-    # or expectations applied to it.
+    # @param dependency [Symbol] the name of the factory to stub.
+    # @param attributes [Hash] the expected attributes to build the instance.
+    # @return [RSpec::Mocks::TestDouble] the result of the factory, which can
+    #   then have additional stubs or expectations applied to it.
     def stub_factory_instance(dependency, attributes)
       factory = stub_factory(dependency)
       double(dependency.to_s).tap do |double|
@@ -20,9 +31,11 @@ module Dependencies
       end
     end
 
-    # Stubs a factory.
+    # Injects a stubbed factory into the test {Container} and returns it.
     #
-    # Returns the stubbed factory, which can have stubs for `new` applied to it.
+    # @param dependency [Symbol] the name of the factory to stub.
+    # @return [RSpec::Mocks::TestDouble] the stubbed factory, which can have
+    #   stubs for `new` applied to it.
     def stub_factory(dependency)
       dependencies[dependency]
     rescue Dependencies::UndefinedDependencyError
@@ -35,10 +48,11 @@ module Dependencies
       end
     end
 
-    # Stubs a service.
+    # Injects a stubbed service into the test {Container} and returns it.
     #
-    # Returns the stubbed service, which can then have additional stubs or
-    # expectations applied to it.
+    # @param dependency [Symbol] the name of the service to stub.
+    # @return [RSpec::Mocks::TestDouble] the stubbed service, which can then
+    #   have additional stubs or expectations applied to it.
     def stub_service(dependency)
       double(dependency.to_s).tap do |double|
         modify_dependencies do |dependencies|
@@ -51,18 +65,19 @@ module Dependencies
 
     # Convenience for injecting a modified container into the test rack session.
     #
-    # Yields the container to be modified. The block should return the new
-    # container.
+    # @yield [Container] the container to be modified. The block should return
+    #   the new container.
     def modify_dependencies
       @request.env[:dependencies] = yield(dependencies)
     end
 
-    # Returns the current container which will be injected into the test rack
-    # session.
+    # @return the current {Container} which will be injected into the test Rack
+    #   session.
     def dependencies
       @request.env[:dependencies]
     end
 
+    # @api private
     def build_container
       Container.new(DefinitionList.new(EmptyDefinitionList.new))
     end

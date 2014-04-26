@@ -1,7 +1,9 @@
 module Dependencies
   # Immutable, chainable list of definitions.
   #
-  # Used internally by Container to define and look up definitions.
+  # Used internally by {Container} to define and look up definitions.
+  #
+  # @api private
   class DefinitionList
     def initialize(parent, definitions = {})
       @parent = parent

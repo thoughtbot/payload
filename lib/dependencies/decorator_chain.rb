@@ -2,7 +2,9 @@ module Dependencies
   # Collects a list of decorators to apply to a component within the context of
   # a container.
   #
-  # Used internally by Container. Use Container#decorate.
+  # Used internally by {Container}. Use {Container#decorate}.
+  #
+  # @api private
   class DecoratorChain
     def initialize(decorators = [])
       @decorators = decorators

@@ -4,7 +4,9 @@ require 'dependencies/factory'
 module Dependencies
   # Encapsulates logic for resolving factory definitions.
   #
-  # Used internally by Container. Use Container#factory.
+  # Used internally by {Container}. Use {Container#factory}.
+  #
+  # @api private
   class FactoryDefinition
     def initialize(block, decorators = DecoratorChain.new)
       @block = block

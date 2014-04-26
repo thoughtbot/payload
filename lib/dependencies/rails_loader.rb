@@ -6,7 +6,9 @@ require 'dependencies/mutable_container'
 module Dependencies
   # Loads dependencies from config/dependencies.rb in Rails applications.
   #
-  # Used by Railtie to provide a Rails dependency loader to RackContainer.
+  # Used by {Railtie} to provide a Rails dependency loader to {RackContainer}.
+  #
+  # @api private
   class RailsLoader
     def to_proc
       lambda { load }

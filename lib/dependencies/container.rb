@@ -4,16 +4,25 @@ require 'dependencies/service_definition'
 module Dependencies
   # Used for configuring and resolving dependencies.
   #
-  # Use RackContainer to inject a container into Rack requests.
+  # @see Railtie Railtie to configure and use dependencies in Rails
+  #   applications.
+  # @see RackContainer RackContainer to inject a container into Rack requests.
+  # @see MutableContainer MutableContainer to define dependencies in
+  #   configuration files.
   class Container
+    # Used internally by {RailsLoader}.
+    #
+    # @api private
+    # @param [DefinitionList] definitions previously defined definitions.
     def initialize(definitions)
       @definitions = definitions
     end
 
     # Extends or replaces an existing dependency definition.
     #
-    # The block will be given the current definition and the container as
-    # arguments.
+    # @param dependency [Symbol] the name of the dependency to decorate.
+    # @yield [Container] the resolved container.
+    # @yieldreturn the decorated instance.
     def decorate(dependency, &block)
       decorated = @definitions.find(dependency).decorate(block)
       define dependency, decorated
@@ -27,28 +36,36 @@ module Dependencies
     # The `new` method will accept remaining dependencies and return the fully
     # resolved dependency from the given block.
     #
-    # The block will receive the container. Any arguments to `new` will be
-    # added as services on the container.
+    # @param dependency [Symbol] the name of the dependency to define.
+    # @yield [Container] the resolved container; any arguments to `new` will be
+    #   added to the container.
+    # @yieldreturn an instance of your dependency.
     def factory(dependency, &block)
       define dependency, FactoryDefinition.new(block)
     end
 
     # Defines a service which can be fully resolved from the container.
     #
-    # The block will receive the container and is expected to return the
-    # instantiated service.
+    # @param dependency [Symbol] the name of the dependency to define.
+    # @yield [Container] the resolved container.
+    # @yieldreturn the instantiated service.
     def service(dependency, &block)
       define dependency, ServiceDefinition.new(block)
     end
 
-    # Resolves a dependency. An unknown dependency will result in an
-    # UndefinedDependencyError.
+    # Resolves and returns dependency.
+    #
+    # @param dependency [Symbol] the name of the dependency to resolve.
+    # @raise [UndefinedDependencyError] for undefined dependencies.
     def [](dependency)
       @definitions.find(dependency).resolve(self)
     end
 
     private
 
+    # Duplicates this object with the definition at the end of the list.
+    #
+    # @api private
     def define(dependency, definition)
       self.class.new(@definitions.add(dependency, definition))
     end

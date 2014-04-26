@@ -3,7 +3,9 @@ require 'dependencies/decorator_chain'
 module Dependencies
   # Encapsulates logic for resolving service definitions.
   #
-  # Used internally by Container. Use Container#service.
+  # Used internally by {Container}. Use {Container#service}.
+  #
+  # @api private
   class ServiceDefinition
     def initialize(block, decorators = DecoratorChain.new)
       @block = block
