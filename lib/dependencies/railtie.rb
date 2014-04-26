@@ -1,5 +1,6 @@
 require 'dependencies/rack_container'
 require 'dependencies/rails_loader'
+require 'dependencies/controller'
 
 module Dependencies
   # Automatically loads and injects dependencies into the Rack environment for
