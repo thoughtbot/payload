@@ -7,15 +7,21 @@ module Dependencies
   # Loads dependencies from config/dependencies.rb in Rails applications.
   #
   # Used by {Railtie} to provide a Rails dependency loader to {RackContainer}.
-  #
-  # @api private
   class RailsLoader
-    def to_proc
+    # @api private
+    def self.to_proc
       lambda { load }
     end
 
-    private
+    # Load dependencies from outside a Rails request.
+    # @example
+    #   RailsLoader.load[:example_service]
+    # @return [Container] dependencies from config/dependencies.rb
+    def self.load
+      new.load
+    end
 
+    # @api private
     def load
       container = MutableContainer.new(
         Container.new(
@@ -27,6 +33,8 @@ module Dependencies
       container.instance_eval(config, config_path)
       container.build
     end
+
+    private
 
     def config
       IO.read(config_path)

@@ -14,7 +14,7 @@ module Dependencies
   class Railtie < ::Rails::Railtie
     config.app_middleware.use(
       Dependencies::RackContainer,
-      &Dependencies::RailsLoader.new
+      &Dependencies::RailsLoader
     )
   end
 end
