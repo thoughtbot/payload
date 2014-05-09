@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'dependencies/service_definition'
 
 describe Dependencies::ServiceDefinition do
-  describe '#new' do
+  describe '#resolve' do
     it 'returns a new service using the block' do
       block = lambda { |container| "Ran with #{container[:dependency]}" }
       service = Dependencies::ServiceDefinition.new(block)

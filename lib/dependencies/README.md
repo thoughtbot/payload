@@ -169,6 +169,40 @@ Use `new` to instantiate dependencies from factories:
 The `new` method accepts a `Hash`. Each element of the `Hash` will be accessible
 from the container in `factory` definitions.
 
+Grouping Dependencies
+---------------------
+
+You can enforce simplicity in your dependency graph by grouping dependencies and
+explicitly exporting only the dependencies you need to expose to the application
+layer.
+
+For example, you can specify payment dependencies in
+`config/dependencies/payments.rb`:
+
+    service :payment_client do |container|
+      PaymentClient.new(ENV['PAYMENT_HOST'])
+    end
+
+    service :payment_notifier do |container|
+      PaymentNotifier.new(container[:mailer])
+    end
+
+    factory :payment do |container|
+      Payment.new(container[:attributes], container[:payment_client])
+    end
+
+    decorate :payment do |payment, container|
+      NotifyingPayment.new(payment, container[:payment_notifier])
+    end
+
+    export :payment
+
+In this example, the final, decorated `:payment` dependency will be available in
+controllers, but `:payment_client` and `:payment_notifier` will not.
+
+You can use this approach to hide low-level dependencies behind a facade and
+only expose the facade to the application layer.
+
 Testing
 -------
 

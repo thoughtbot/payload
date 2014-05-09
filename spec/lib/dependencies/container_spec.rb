@@ -76,6 +76,69 @@ describe Dependencies::Container do
     end
   end
 
+  describe '#export' do
+    it 'allows access to exported definitions' do
+      exports = build_container.
+        service(:example) { |config| 'expected component' }.
+        export(:example)
+      container = build_container.import(exports)
+
+      expect(container[:example]).to eq('expected component')
+    end
+
+    it 'does not allow access to private definitions' do
+      exports = build_container.
+        service(:exported) { |config| 'exported' }.
+        service(:private) { |config| 'private' }.
+        export(:exported)
+      container = build_container.import(exports)
+
+      expect { container[:private] }.
+        to raise_error(Dependencies::UndefinedDependencyError)
+    end
+
+    it 'allows exported definitions to reference private definitions' do
+      exports = build_container.
+        service(:exported) { |config| "got #{config[:private].inspect}" }.
+        service(:private) { |config| 'private' }.
+        export(:exported)
+      container = build_container.import(exports)
+
+      expect(container[:exported]).to eq('got "private"')
+    end
+
+    it 'exposes local definitions to private definitions' do
+      exports = build_container.
+        service(:exported) { |config| "got #{config[:local].inspect}" }.
+        export(:exported)
+      container = build_container.
+        service(:local) { |config| 'local' }.
+        import(exports)
+
+      expect(container[:exported]).to eq('got "local"')
+    end
+  end
+
+  describe '#import' do
+    it 'returns a new container with the given definitions' do
+      first_export =
+        Dependencies::ServiceDefinition.new(lambda { |config| 'one' })
+      second_export =
+        Dependencies::ServiceDefinition.new(lambda { |config| 'two' })
+      definitions = Dependencies::DefinitionList.
+        new(Dependencies::EmptyDefinitionList).
+        add(:one, first_export).
+        add(:two, second_export)
+      container = build_container.
+        service(:original) { |config| 'original' }.
+        import(definitions)
+
+      expect(container[:original]).to eq('original')
+      expect(container[:one]).to eq('one')
+      expect(container[:two]).to eq('two')
+    end
+  end
+
   describe '#[]' do
     context 'with an undefined dependency' do
       it 'raises an undefined dependency error' do

@@ -23,6 +23,22 @@ module Dependencies
 
     # @api private
     def load
+      namespace_containers.inject(root_container) do |target, source|
+        target.import(source.exports)
+      end
+    end
+
+    private
+
+    def namespace_containers
+      namespace_config_paths.map { |path| load_from(path) }
+    end
+
+    def root_container
+      load_from(root_config_path).build
+    end
+
+    def load_from(path)
       container = MutableContainer.new(
         Container.new(
           DefinitionList.new(
@@ -30,18 +46,20 @@ module Dependencies
           )
         )
       )
-      container.instance_eval(config, config_path)
-      container.build
+      container.instance_eval(IO.read(path), path)
+      container
     end
 
-    private
+    def root_config_path
+      config_path.join('dependencies.rb').to_s
+    end
 
-    def config
-      IO.read(config_path)
+    def namespace_config_paths
+      Dir.glob config_path.join('dependencies/*.rb').to_s
     end
 
     def config_path
-      Rails.root.join('config', 'dependencies.rb').to_s
+      Rails.root.join('config')
     end
   end
 end

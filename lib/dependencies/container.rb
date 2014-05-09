@@ -61,6 +61,28 @@ module Dependencies
       @definitions.find(dependency).resolve(self)
     end
 
+    # Exports dependencies which can be imported into another container.
+    #
+    # Used internally by {MutableContainer}. Use {MutableContainer#export}.
+    #
+    # @api private
+    # @param names [Array<Symbol>] dependencies to export.
+    # @return [DependencyList] exported dependencies.
+    def export(*names)
+      @definitions.export(names)
+    end
+
+    # Import dependencies which were exported from another container.
+    #
+    # Used internally by {RailsLoader}.
+    #
+    # @api private
+    # @param definitions [DependencyList] definitions to import.
+    # @return [Container] a new container with the imported definitions.
+    def import(definitions)
+      self.class.new @definitions.import(definitions)
+    end
+
     private
 
     # Duplicates this object with the definition at the end of the list.

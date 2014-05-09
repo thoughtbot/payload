@@ -22,6 +22,44 @@ describe Dependencies::DefinitionList do
     end
   end
 
+  describe '#export' do
+    it 'returns a new list with only the given dependencies' do
+      parent = double('parent', find: 'undefined')
+      definition_list = Dependencies::DefinitionList.
+        new(parent).
+        add(:one, 'first').
+        add(:two, 'second').
+        add(:three, 'third')
+      first_exported = double('exported_first')
+      Dependencies::ExportedDefinition.
+        stub(:new).
+        with('first', definition_list).
+        and_return(first_exported)
+      second_exported = double('exported_second')
+      Dependencies::ExportedDefinition.
+        stub(:new).
+        with('second', definition_list).
+        and_return(second_exported)
+
+      exported = definition_list.export([:one, :two])
+
+      expect(exported.find(:one)).to eq(first_exported)
+      expect(exported.find(:two)).to eq(second_exported)
+      expect(exported.find(:three)).to eq('undefined')
+    end
+  end
+
+  describe '#import' do
+    it 'returns a new list with old dependencies and the given dependencies' do
+      left = Dependencies::DefinitionList.new(nil_list).add(:one, 'first')
+      right = Dependencies::DefinitionList.new(nil_list).add(:two, 'second')
+      merged = left.import(right)
+
+      expect(merged.find(:one)).to eq('first')
+      expect(merged.find(:two)).to eq('second')
+    end
+  end
+
   describe '#find' do
     it 'finds a definition from its parent' do
       definition = double('definition')

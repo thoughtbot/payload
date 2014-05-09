@@ -11,6 +11,7 @@ module Dependencies
     # @api private
     def initialize(container)
       @container = container
+      @exported_names = []
     end
 
     # Delegates to {Container} and uses the returned result as the new
@@ -29,6 +30,22 @@ module Dependencies
     # @return Container the fully-configured, immutable container.
     def build
       @container
+    end
+
+    # Exports dependencies so that they are available in other containers.
+    #
+    # @param names [Array<Symbol>] dependencies to export.
+    def export(*names)
+      @exported_names += names
+    end
+
+    # Returns dependencies specified by previous {#export} invocations.
+    #
+    # Used internally by {RailsLoader}.
+    #
+    # @api private
+    def exports
+      @container.export(*@exported_names)
     end
 
     private

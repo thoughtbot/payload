@@ -41,4 +41,26 @@ describe Dependencies::MutableContainer do
       end
     end
   end
+
+  describe '#export' do
+    it 'adds dependencies to the export list' do
+      exports = double('exports')
+      immutable_container = double('base_container')
+      immutable_container.stub(:service).and_return(immutable_container)
+      immutable_container.
+        stub(:export).
+        with(:one, :two, :three).
+        and_return(exports)
+      container = Dependencies::MutableContainer.new(immutable_container)
+
+      container.service(:one)
+      container.service(:two)
+      container.service(:three)
+      container.service(:unexported)
+      container.export(:one, :two)
+      container.export(:three)
+
+      expect(container.exports).to eq(exports)
+    end
+  end
 end

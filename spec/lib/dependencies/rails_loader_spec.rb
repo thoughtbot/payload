@@ -3,36 +3,56 @@ require 'dependencies/rails_loader'
 
 describe Dependencies::RailsLoader do
   describe '.load' do
-    it 'loads a Container from config/dependencies.rb' do
-      stub_config <<-RUBY
-        service(:one) { |container| 1 }
-        service(:two) { |container| container[:one] * 2 }
-      RUBY
+    it 'returns a proc which returns a Container from config/dependencies.rb' do
+      in_rails_root do
+        write_config 'dependencies.rb', <<-RUBY
+          service(:root) { |container| 'root' }
+          service(:using_root) { |container| "using \#{container[:root]}" }
+        RUBY
 
-      container = Dependencies::RailsLoader.load
+        write_config 'dependencies/namespace.rb', <<-RUBY
+          service(:private) { |container| "private with \#{container[:root]}" }
+          service(:exported) { |container| "exported \#{container[:private]}" }
+          export :exported
+        RUBY
 
-      expect(container[:two]).to eq(2)
-      expect(container[:one]).to eq(1)
+        container = Dependencies::RailsLoader.load
+
+        expect(container[:root]).to eq('root')
+        expect(container[:using_root]).to eq('using root')
+        expect(container[:exported]).to eq('exported private with root')
+        expect { container[:private] }.
+          to raise_error(Dependencies::UndefinedDependencyError)
+      end
     end
   end
 
   describe '.to_proc' do
     it 'returns a proc which returns a Container from config/dependencies.rb' do
-      stub_config <<-RUBY
-        service(:example) { |container| 'expected' }
-      RUBY
+      in_rails_root do
+        write_config 'dependencies.rb', <<-RUBY
+          service(:example) { |container| 'expected' }
+        RUBY
 
-      container = Dependencies::RailsLoader.to_proc.call
+        container = Dependencies::RailsLoader.to_proc.call
 
-      expect(container[:example]).to eq('expected')
+        expect(container[:example]).to eq('expected')
+      end
     end
   end
 
-  def stub_config(config)
-    Rails.stub(:root).and_return(Pathname.new('/rails/root'))
-    IO.
-      stub(:read).
-      with('/rails/root/config/dependencies.rb').
-      and_return(config)
+  def in_rails_root(&block)
+    Dir.mktmpdir do |path|
+      Dir.chdir(path) do
+        Rails.stub(:root).and_return(Pathname.pwd)
+        yield
+      end
+    end
+  end
+
+  def write_config(path, contents)
+    config_path = File.join('config', path)
+    FileUtils.mkdir_p File.dirname(config_path)
+    File.open(config_path, 'w') { |file| file.write(contents) }
   end
 end
