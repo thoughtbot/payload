@@ -15,7 +15,7 @@ describe Dependencies::ExportedDefinition do
       private_definition =
         Dependencies::ServiceDefinition.new(lambda { |config| 'private' })
       private_definitions = Dependencies::DefinitionList.
-        new(Dependencies::EmptyDefinitionList.new).
+        new.
         add(:private, private_definition)
       container = build_container.service(:container) { |config| 'container' }
       definition = Dependencies::ServiceDefinition.new(block)

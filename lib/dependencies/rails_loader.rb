@@ -1,4 +1,3 @@
-require 'dependencies/empty_definition_list'
 require 'dependencies/definition_list'
 require 'dependencies/container'
 require 'dependencies/mutable_container'
@@ -39,13 +38,7 @@ module Dependencies
     end
 
     def load_from(path)
-      container = MutableContainer.new(
-        Container.new(
-          DefinitionList.new(
-            EmptyDefinitionList.new
-          )
-        )
-      )
+      container = MutableContainer.new(Container.new(DefinitionList.new))
       container.instance_eval(IO.read(path), path)
       container
     end

@@ -1,4 +1,3 @@
-require 'dependencies/empty_definition_list'
 require 'dependencies/definition_list'
 require 'dependencies/container'
 
@@ -79,7 +78,7 @@ module Dependencies
 
     # @api private
     def build_container
-      Container.new(DefinitionList.new(EmptyDefinitionList.new))
+      Container.new(DefinitionList.new)
     end
   end
 end

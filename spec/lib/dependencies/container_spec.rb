@@ -126,7 +126,7 @@ describe Dependencies::Container do
       second_export =
         Dependencies::ServiceDefinition.new(lambda { |config| 'two' })
       definitions = Dependencies::DefinitionList.
-        new(Dependencies::EmptyDefinitionList).
+        new.
         add(:one, first_export).
         add(:two, second_export)
       container = build_container.
