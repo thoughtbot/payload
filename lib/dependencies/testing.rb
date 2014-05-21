@@ -78,7 +78,7 @@ module Dependencies
 
     # @api private
     def build_container
-      Container.new(DefinitionList.new)
+      Container.new
     end
   end
 end

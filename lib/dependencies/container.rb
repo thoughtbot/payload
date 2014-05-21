@@ -1,3 +1,4 @@
+require 'dependencies/definition_list'
 require 'dependencies/factory_definition'
 require 'dependencies/service_definition'
 
@@ -14,7 +15,7 @@ module Dependencies
     #
     # @api private
     # @param [DefinitionList] definitions previously defined definitions.
-    def initialize(definitions)
+    def initialize(definitions = DefinitionList.new)
       @definitions = definitions
     end
 

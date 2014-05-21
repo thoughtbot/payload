@@ -16,7 +16,7 @@ module Dependencies
     end
 
     def call(env)
-      env[:dependencies] = @loader.call
+      env[:dependencies] = @loader.call.service(:rack_env) { |container| env }
       @app.call(env)
     end
   end
