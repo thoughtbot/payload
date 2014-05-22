@@ -1,7 +1,7 @@
-require 'dependencies/exported_definition'
-require 'dependencies/undefined_dependency_error'
+require 'payload/exported_definition'
+require 'payload/undefined_dependency_error'
 
-module Dependencies
+module Payload
   # Immutable list of definitions.
   #
   # Used internally by {Container} to define and look up definitions.

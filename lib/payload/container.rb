@@ -1,8 +1,8 @@
-require 'dependencies/definition_list'
-require 'dependencies/factory_definition'
-require 'dependencies/service_definition'
+require 'payload/definition_list'
+require 'payload/factory_definition'
+require 'payload/service_definition'
 
-module Dependencies
+module Payload
   # Used for configuring and resolving dependencies.
   #
   # @see Railtie Railtie to configure and use dependencies in Rails

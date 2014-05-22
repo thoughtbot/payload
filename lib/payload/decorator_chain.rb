@@ -1,4 +1,4 @@
-module Dependencies
+module Payload
   # Collects a list of decorators to apply to a component within the context of
   # a container.
   #

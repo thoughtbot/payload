@@ -1,11 +1,11 @@
 require 'spec_helper'
 require 'tmpdir'
-require 'dependencies/rails_loader'
+require 'payload/rails_loader'
 
 module Rails
 end
 
-describe Dependencies::RailsLoader do
+describe Payload::RailsLoader do
   describe '.load' do
     it 'returns a proc which returns a Container from config/dependencies.rb' do
       in_rails_root do
@@ -14,19 +14,19 @@ describe Dependencies::RailsLoader do
           service(:using_root) { |container| "using \#{container[:root]}" }
         RUBY
 
-        write_config 'dependencies/namespace.rb', <<-RUBY
+        write_config 'payload/namespace.rb', <<-RUBY
           service(:private) { |container| "private with \#{container[:root]}" }
           service(:exported) { |container| "exported \#{container[:private]}" }
           export :exported
         RUBY
 
-        container = Dependencies::RailsLoader.load
+        container = Payload::RailsLoader.load
 
         expect(container[:root]).to eq('root')
         expect(container[:using_root]).to eq('using root')
         expect(container[:exported]).to eq('exported private with root')
         expect { container[:private] }.
-          to raise_error(Dependencies::UndefinedDependencyError)
+          to raise_error(Payload::UndefinedDependencyError)
       end
     end
   end
@@ -38,7 +38,7 @@ describe Dependencies::RailsLoader do
           service(:example) { |container| 'expected' }
         RUBY
 
-        container = Dependencies::RailsLoader.to_proc.call
+        container = Payload::RailsLoader.to_proc.call
 
         expect(container[:example]).to eq('expected')
       end

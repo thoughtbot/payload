@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'dependencies/mutable_container'
+require 'payload/mutable_container'
 
-describe Dependencies::MutableContainer do
+describe Payload::MutableContainer do
   %w(service factory decorate).each do |method_name|
     describe "##{method_name}" do
       it "redefines the container with a #{method_name}" do
@@ -11,7 +11,7 @@ describe Dependencies::MutableContainer do
           to receive(method_name).
           with(:example).
           and_return(modified_container)
-        container = Dependencies::MutableContainer.new(base_container)
+        container = Payload::MutableContainer.new(base_container)
 
         result = container.send(method_name, :example)
 
@@ -26,7 +26,7 @@ describe Dependencies::MutableContainer do
       it 'returns true' do
         base_container = double('base_container')
         allow(base_container).to receive(:example)
-        container = Dependencies::MutableContainer.new(base_container)
+        container = Payload::MutableContainer.new(base_container)
 
         expect(container.method(:example)).not_to be_nil
       end
@@ -35,7 +35,7 @@ describe Dependencies::MutableContainer do
     context 'for an undefined method' do
       it 'returns false' do
         base_container = double('base_container')
-        container = Dependencies::MutableContainer.new(base_container)
+        container = Payload::MutableContainer.new(base_container)
 
         expect { container.method(:unknown) }.to raise_error(NameError)
       end
@@ -53,7 +53,7 @@ describe Dependencies::MutableContainer do
         to receive(:export).
         with(:one, :two, :three).
         and_return(exports)
-      container = Dependencies::MutableContainer.new(immutable_container)
+      container = Payload::MutableContainer.new(immutable_container)
 
       container.service(:one)
       container.service(:two)

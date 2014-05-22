@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'rack/mock'
-require 'dependencies/rack_container'
-require 'dependencies/testing'
+require 'payload/rack_container'
+require 'payload/testing'
 
-describe Dependencies::RackContainer do
-  include Dependencies::Testing
+describe Payload::RackContainer do
+  include Payload::Testing
 
   describe '#call' do
     it 'injects its container into the Rack environment' do
@@ -12,7 +12,7 @@ describe Dependencies::RackContainer do
       dependencies = build_container.
         service(:example) { service }
       app = lambda { |env| [200, {}, [env[:dependencies][:example].inspect]] }
-      stack = Dependencies::RackContainer.new(app) { dependencies }
+      stack = Payload::RackContainer.new(app) { dependencies }
 
       response = Rack::MockRequest.new(stack).get('/')
 
@@ -23,7 +23,7 @@ describe Dependencies::RackContainer do
       dependencies = build_container.
         service(:path) { |container| container[:rack_env]['PATH_INFO'] }
       app = lambda { |env| [200, {}, [env[:dependencies][:path]]] }
-      stack = Dependencies::RackContainer.new(app) { dependencies }
+      stack = Payload::RackContainer.new(app) { dependencies }
 
       response = Rack::MockRequest.new(stack).get('/some_path')
 

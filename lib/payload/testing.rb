@@ -1,7 +1,7 @@
-require 'dependencies/definition_list'
-require 'dependencies/container'
+require 'payload/definition_list'
+require 'payload/container'
 
-module Dependencies
+module Payload
   # Helper methods for stubbing and injecting dependencies into unit tests.
   #
   # These methods are intended for rspec controller tests and require
@@ -37,7 +37,7 @@ module Dependencies
     #   stubs for `new` applied to it.
     def stub_factory(dependency)
       dependencies[dependency]
-    rescue Dependencies::UndefinedDependencyError
+    rescue Payload::UndefinedDependencyError
       double("#{dependency} factory").tap do |factory|
         modify_dependencies do |dependencies|
           dependencies.service(dependency) do |config|

@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'dependencies/service_definition'
+require 'payload/service_definition'
 
-describe Dependencies::ServiceDefinition do
+describe Payload::ServiceDefinition do
   describe '#resolve' do
     it 'returns a new service using the block' do
       block = lambda { |container| "Ran with #{container[:dependency]}" }
-      service = Dependencies::ServiceDefinition.new(block)
+      service = Payload::ServiceDefinition.new(block)
 
       result = service.resolve(dependency: 'expected service')
 
@@ -22,7 +22,7 @@ describe Dependencies::ServiceDefinition do
       second = lambda do |component, container|
         "#{component} and #{container[:other_dependency]}"
       end
-      service = Dependencies::ServiceDefinition
+      service = Payload::ServiceDefinition
         .new(block)
         .decorate(first)
         .decorate(second)

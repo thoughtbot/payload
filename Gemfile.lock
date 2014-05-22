@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dependencies (0.1.0)
+    payload (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -22,7 +22,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  dependencies!
+  payload!
   rack
   rake
   rspec (~> 2.14.1)

@@ -1,4 +1,4 @@
-module Dependencies
+module Payload
   # Mutable builder for defining dependencies.
   #
   # Allows defining dependencies without fear of breaking the chain while still

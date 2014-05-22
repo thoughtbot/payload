@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'dependencies/decorator_chain'
+require 'payload/decorator_chain'
 
-describe Dependencies::DecoratorChain do
+describe Payload::DecoratorChain do
   describe '#decorate' do
     it 'applies a series of decorators to a component' do
-      chain = Dependencies::DecoratorChain
+      chain = Payload::DecoratorChain
         .new
         .add(lambda { |base, config| "Decorated #{base} with #{config[:one]}" })
         .add(lambda { |base, config| "#{base} and #{config[:two]}" })
@@ -15,7 +15,7 @@ describe Dependencies::DecoratorChain do
     end
 
     it "doesn't mutate" do
-      chain = Dependencies::DecoratorChain
+      chain = Payload::DecoratorChain
         .new
         .add(lambda { |base, config| "Decorated #{base}" })
 

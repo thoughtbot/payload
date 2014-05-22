@@ -1,7 +1,7 @@
-require 'dependencies/decorator_chain'
-require 'dependencies/factory'
+require 'payload/decorator_chain'
+require 'payload/factory'
 
-module Dependencies
+module Payload
   # Encapsulates logic for resolving factory definitions.
   #
   # Used internally by {Container}. Use {Container#factory}.

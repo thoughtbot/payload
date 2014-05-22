@@ -1,4 +1,4 @@
-module Dependencies
+module Payload
   # Uses a dependency loader to load dependencies and inject them into the Rack
   # environment.
   #

@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'dependencies/container'
-require 'dependencies/testing'
+require 'payload/container'
+require 'payload/testing'
 
-describe Dependencies::Container do
-  include Dependencies::Testing
+describe Payload::Container do
+  include Payload::Testing
 
   describe '#factory' do
     it 'returns an object that responds to new' do
@@ -32,7 +32,7 @@ describe Dependencies::Container do
       original.service(:example) { |config| 'expected result' }
 
       expect { original[:example] }
-        .to raise_error(Dependencies::UndefinedDependencyError)
+        .to raise_error(Payload::UndefinedDependencyError)
     end
 
     it 'provides access to other dependencies' do
@@ -72,7 +72,7 @@ describe Dependencies::Container do
       container = build_container
 
       expect { container.decorate(:anything) }
-        .to raise_error(Dependencies::UndefinedDependencyError)
+        .to raise_error(Payload::UndefinedDependencyError)
     end
   end
 
@@ -94,7 +94,7 @@ describe Dependencies::Container do
       container = build_container.import(exports)
 
       expect { container[:private] }.
-        to raise_error(Dependencies::UndefinedDependencyError)
+        to raise_error(Payload::UndefinedDependencyError)
     end
 
     it 'allows exported definitions to reference private definitions' do
@@ -122,10 +122,10 @@ describe Dependencies::Container do
   describe '#import' do
     it 'returns a new container with the given definitions' do
       first_export =
-        Dependencies::ServiceDefinition.new(lambda { |config| 'one' })
+        Payload::ServiceDefinition.new(lambda { |config| 'one' })
       second_export =
-        Dependencies::ServiceDefinition.new(lambda { |config| 'two' })
-      definitions = Dependencies::DefinitionList.
+        Payload::ServiceDefinition.new(lambda { |config| 'two' })
+      definitions = Payload::DefinitionList.
         new.
         add(:one, first_export).
         add(:two, second_export)
@@ -145,7 +145,7 @@ describe Dependencies::Container do
         container = build_container
 
         expect { container[:undefined] }.to raise_error(
-          Dependencies::UndefinedDependencyError,
+          Payload::UndefinedDependencyError,
           'No definition for dependency: undefined'
         )
       end

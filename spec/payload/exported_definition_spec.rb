@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'dependencies/exported_definition'
-require 'dependencies/testing'
+require 'payload/exported_definition'
+require 'payload/testing'
 
-describe Dependencies::ExportedDefinition do
-  include Dependencies::Testing
+describe Payload::ExportedDefinition do
+  include Payload::Testing
 
   describe '#resolve' do
     it 'finds definitions from both the source and argument containers' do
@@ -13,14 +13,14 @@ describe Dependencies::ExportedDefinition do
       end
 
       private_definition =
-        Dependencies::ServiceDefinition.new(lambda { |config| 'private' })
-      private_definitions = Dependencies::DefinitionList.
+        Payload::ServiceDefinition.new(lambda { |config| 'private' })
+      private_definitions = Payload::DefinitionList.
         new.
         add(:private, private_definition)
       container = build_container.service(:container) { |config| 'container' }
-      definition = Dependencies::ServiceDefinition.new(block)
+      definition = Payload::ServiceDefinition.new(block)
       exported_definition =
-        Dependencies::ExportedDefinition.new(definition, private_definitions)
+        Payload::ExportedDefinition.new(definition, private_definitions)
 
       result = exported_definition.resolve(container)
 

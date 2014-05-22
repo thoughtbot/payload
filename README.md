@@ -1,8 +1,8 @@
-# Dependencies
+# Payload
 
-This module contains a lightweight framework for specifying, injecting, and
-using dependencies. It facilitates run-time assembly of dependencies and makes
-it plausible to use inversion of control beyond the controller level. It also
+Payload is a lightweight framework for specifying, injecting, and using
+dependencies. It facilitates run-time assembly of dependencies and makes it
+plausible to use inversion of control beyond the controller level. It also
 attempts to remove boilerplate code for common patterns such as defining
 factories and applying decorators.
 
@@ -88,19 +88,14 @@ and deal only with the collaborator they need: `payment`.
 Setup
 -----
 
-To activate the framework in a Rails application, load the Railtie in
-`config/application.rb`:
+Add payload to your Gemfile:
 
-    module Example
-      class Application < Rails::Application
-        require 'dependencies/railtie'
-      end
-    end
+    gem 'payload'
 
 To access dependencies from controllers, include the `Controller` module:
 
     class ApplicationController < ActionController::Base
-      include Dependencies::Controller
+      include Payload::Controller
     end
 
 Specifying Dependencies
@@ -211,7 +206,7 @@ To activate testing support, require and mix in the `Testing` module:
     require 'dependencies/testing'
 
     RSpec.configure do |config|
-      config.include Dependencies::Testing
+      config.include Payload::Testing
     end
 
 During integration tests, the fully configured container will be used. During

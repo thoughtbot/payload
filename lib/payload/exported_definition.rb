@@ -1,4 +1,4 @@
-module Dependencies
+module Payload
   # Decorates a base definition such as {ServiceDefinition} to provide access to
   # private dependencies in the {Container} from which the definition was
   # exported.

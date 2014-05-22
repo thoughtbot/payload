@@ -1,4 +1,4 @@
-module Dependencies
+module Payload
   # Mixin to provide access to a {Container}.
   #
   # Include this mixin to access dependencies in controllers. The {Container}

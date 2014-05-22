@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'dependencies/controller'
+require 'payload/controller'
 
-describe Dependencies::Controller do
+describe Payload::Controller do
   describe '#dependencies' do
     it 'looks for dependencies from the Rack environment' do
       dependency = double('dependency')
@@ -9,7 +9,7 @@ describe Dependencies::Controller do
       env = { dependencies: container }
       request = double('request', env: env)
       controller_class = Class.new do
-        include Dependencies::Controller
+        include Payload::Controller
 
         def initialize(request)
           @request = request

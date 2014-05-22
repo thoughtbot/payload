@@ -1,8 +1,8 @@
-require 'dependencies/definition_list'
-require 'dependencies/container'
-require 'dependencies/mutable_container'
+require 'payload/definition_list'
+require 'payload/container'
+require 'payload/mutable_container'
 
-module Dependencies
+module Payload
   # Loads dependencies from config/dependencies.rb in Rails applications.
   #
   # Used by {Railtie} to provide a Rails dependency loader to {RackContainer}.
@@ -48,7 +48,7 @@ module Dependencies
     end
 
     def namespace_config_paths
-      Dir.glob config_path.join('dependencies/*.rb').to_s
+      Dir.glob config_path.join('payload/*.rb').to_s
     end
 
     def config_path

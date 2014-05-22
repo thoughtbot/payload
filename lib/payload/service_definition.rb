@@ -1,6 +1,6 @@
-require 'dependencies/decorator_chain'
+require 'payload/decorator_chain'
 
-module Dependencies
+module Payload
   # Encapsulates logic for resolving service definitions.
   #
   # Used internally by {Container}. Use {Container#service}.

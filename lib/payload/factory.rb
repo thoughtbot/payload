@@ -1,4 +1,4 @@
-module Dependencies
+module Payload
   # Returned by {Container#[]} for {Container#factory} definitions.
   #
   # Used to add definitions from {#new} to the {Container} and then run the

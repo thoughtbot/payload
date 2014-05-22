@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'dependencies/factory_definition'
-require 'dependencies/testing'
+require 'payload/factory_definition'
+require 'payload/testing'
 
-describe Dependencies::FactoryDefinition do
-  include Dependencies::Testing
+describe Payload::FactoryDefinition do
+  include Payload::Testing
 
   describe '#resolve' do
     it 'returns an object that responds to new' do
@@ -12,7 +12,7 @@ describe Dependencies::FactoryDefinition do
       end
       container = build_container
         .service(:from_container) { 'From container' }
-      definition = Dependencies::FactoryDefinition.new(block)
+      definition = Payload::FactoryDefinition.new(block)
 
       result = definition.resolve(container).new(from_new: 'From new')
 
@@ -34,7 +34,7 @@ describe Dependencies::FactoryDefinition do
       container = build_container
         .service(:from_container) { 'From container' }
         .service(:other) { 'Other' }
-      definition = Dependencies::FactoryDefinition
+      definition = Payload::FactoryDefinition
         .new(block)
         .decorate(first)
         .decorate(second)
