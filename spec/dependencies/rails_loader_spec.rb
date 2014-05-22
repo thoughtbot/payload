@@ -1,5 +1,9 @@
 require 'spec_helper'
+require 'tmpdir'
 require 'dependencies/rails_loader'
+
+module Rails
+end
 
 describe Dependencies::RailsLoader do
   describe '.load' do
@@ -44,7 +48,7 @@ describe Dependencies::RailsLoader do
   def in_rails_root(&block)
     Dir.mktmpdir do |path|
       Dir.chdir(path) do
-        Rails.stub(:root).and_return(Pathname.pwd)
+        allow(Rails).to receive(:root).and_return(Pathname.pwd)
         yield
       end
     end

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'rack/mock'
 require 'dependencies/rack_container'
 require 'dependencies/testing'
 

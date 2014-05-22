@@ -31,13 +31,13 @@ describe Dependencies::DefinitionList do
         add(:two, 'second').
         add(:three, 'third')
       first_exported = double('exported_first')
-      Dependencies::ExportedDefinition.
-        stub(:new).
+      allow(Dependencies::ExportedDefinition).
+        to receive(:new).
         with('first', definition_list).
         and_return(first_exported)
       second_exported = double('exported_second')
-      Dependencies::ExportedDefinition.
-        stub(:new).
+      allow(Dependencies::ExportedDefinition).
+        to receive(:new).
         with('second', definition_list).
         and_return(second_exported)
 
