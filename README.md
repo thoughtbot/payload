@@ -219,3 +219,24 @@ This module provides two useful methods:
   it.
 * `stub_factory_instance`: Finds or injects a stubbed factory into the test
   container and expects an instance to be created with the given attributes.
+
+Contributing
+------------
+
+Please see the [contribution guidelines].
+
+[contribution guidelines]: https://github.com/thoughtbot/payload/blob/master/CONTRIBUTING.md.
+
+License
+-------
+
+![thoughtbot](http://thoughtbot.com/assets/tm/logo.png)
+
+Payload is Copyright © 2014 Joe Ferris and thoughtbot. It is free software, and
+may be redistributed under the terms specified in the [LICENSE] file.
+
+[LICENSE]: https://github.com/thoughtbot/payload/blob/master/LICENSE
+
+Payload is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/).
+
+The names and logos for thoughtbot are trademarks of thoughtbot, inc.
