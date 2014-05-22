@@ -1,10 +1,12 @@
 # Payload
 
 Payload is a lightweight framework for specifying, injecting, and using
-dependencies. It facilitates run-time assembly of dependencies and makes it
-plausible to use inversion of control beyond the controller level. It also
-attempts to remove boilerplate code for common patterns such as defining
-factories and applying decorators.
+dependencies in Ruby on Rails applications. It facilitates run-time assembly of
+dependencies and makes it plausible to use [inversion of control] beyond the
+controller level. It also attempts to remove boilerplate code for common
+patterns such as defining factories and applying decorators.
+
+[inversion of control]: http://martinfowler.com/articles/injection.html
 
 Overview
 --------
@@ -41,7 +43,7 @@ You can easily test this dependency in a controller spec:
 describe PaymentsController do
   describe '#create' do
     it 'processes a payment' do
-      payment_params = :product_id => '123', amount: '25'
+      payment_params = { product_id: '123', amount: '25' }
       client = stub_service(:payment_client)
       payment = double('payment', process: true)
       Payment.stub(:new).with(payment_params, client).and_return(payment)
@@ -83,7 +85,7 @@ You can also stub factories in tests:
 describe PaymentsController do
   describe '#create' do
     it 'processes a payment' do
-      payment_params = :product_id => '123', amount: '25'
+      payment_params = { product_id: '123', amount: '25' }
       payment = stub_factory_instance(:payment, attributes: payment_params)
 
       post :create, payment_params
@@ -120,7 +122,7 @@ Specifying Dependencies
 Edit `config/dependencies.rb` to specify dependencies.
 
 Use the `service` method to define dependencies which can be fully instantiated
-during application bootup:
+when the application boots:
 
 ```ruby
 service :payment_client do |container|
@@ -234,7 +236,7 @@ Testing
 To activate testing support, require and mix in the `Testing` module:
 
 ```ruby
-require 'dependencies/testing'
+require 'payload/testing'
 
 RSpec.configure do |config|
   config.include Payload::Testing
