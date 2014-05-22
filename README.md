@@ -225,7 +225,7 @@ Contributing
 
 Please see the [contribution guidelines].
 
-[contribution guidelines]: https://github.com/thoughtbot/payload/blob/master/CONTRIBUTING.md.
+[contribution guidelines]: https://github.com/thoughtbot/payload/blob/master/CONTRIBUTING.md
 
 License
 -------
