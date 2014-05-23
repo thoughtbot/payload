@@ -15,6 +15,10 @@ The framework makes it easy to define dependencies from application code without
 resorting to singletons, constants, or globals. It also won't cause any
 class-reloading issues during development.
 
+The central object in the framework is a "container." Dependencies are specified
+using Ruby configuration files. Configured dependencies are then available
+anywhere a reference to the container is available.
+
 Define simple dependencies in `config/dependencies.rb` using services:
 
 ```ruby
@@ -23,7 +27,12 @@ service :payment_client do |container|
 end
 ```
 
-You can inject dependencies into controllers.
+The configuration block receives a reference to the container, which will
+contain all configured dependencies. This makes it possible to define
+dependencies without knowing how or when their sub-dependencies will be defined.
+
+Controllers receive a reference named `dependencies`, so you can easily inject
+dependencies into controllers.
 
 For example, in `app/controllers/payments_controller.rb`:
 
