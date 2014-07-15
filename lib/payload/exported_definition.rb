@@ -1,5 +1,5 @@
 module Payload
-  # Decorates a base definition such as {ServiceDefinition} to provide access to
+  # Decorates a base definition such as {ServiceResolver} to provide access to
   # private dependencies in the {Container} from which the definition was
   # exported.
   #

@@ -122,13 +122,13 @@ describe Payload::Container do
   describe '#import' do
     it 'returns a new container with the given definitions' do
       first_export =
-        Payload::ServiceDefinition.new(lambda { |config| 'one' })
+        Payload::ServiceResolver.new(lambda { |config| 'one' })
       second_export =
-        Payload::ServiceDefinition.new(lambda { |config| 'two' })
+        Payload::ServiceResolver.new(lambda { |config| 'two' })
       definitions = Payload::DefinitionList.
         new.
-        add(:one, first_export).
-        add(:two, second_export)
+        add(:one, Payload::Definition.new(first_export)).
+        add(:two, Payload::Definition.new(second_export))
       container = build_container.
         service(:original) { |config| 'original' }.
         import(definitions)

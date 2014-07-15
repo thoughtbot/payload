@@ -12,13 +12,15 @@ describe Payload::ExportedDefinition do
           "and #{container[:container]}"
       end
 
-      private_definition =
-        Payload::ServiceDefinition.new(lambda { |config| 'private' })
+      private_definition = Payload::Definition.new(
+        Payload::ServiceResolver.new(lambda { |config| 'private' })
+      )
       private_definitions = Payload::DefinitionList.
         new.
         add(:private, private_definition)
       container = build_container.service(:container) { |config| 'container' }
-      definition = Payload::ServiceDefinition.new(block)
+      definition =
+        Payload::Definition.new(Payload::ServiceResolver.new(block))
       exported_definition =
         Payload::ExportedDefinition.new(definition, private_definitions)
 

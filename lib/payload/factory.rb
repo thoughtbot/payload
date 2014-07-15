@@ -6,7 +6,7 @@ module Payload
   #
   # @see Container#factory Container#factory for defining and using factories.
   class Factory
-    # Used internally by {FactoryDefinition}.
+    # Used internally by {FactoryResolver}.
     #
     # @api private
     def initialize(container, block, decorators)
