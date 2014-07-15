@@ -4,22 +4,74 @@ require 'payload/definition_list'
 describe Payload::DefinitionList do
   describe '#add' do
     it 'adds a dependency to be found later' do
-      definition = double('definition')
+      resolver = double('resolver')
+      definition = Payload::Definition.new(resolver)
       definition_list = Payload::DefinitionList.new
 
-      defined = definition_list.add(:example, definition)
+      defined = definition_list.add(:example, resolver)
 
       expect(defined.find(:example)).to eq(definition)
     end
 
-    it 'does not mutate the list' do
-      definition = double('definition')
+    it 'does not replace an existing definition' do
       definition_list = Payload::DefinitionList.new
 
-      definition_list.add(:example, definition)
+      defined = definition_list.add(:example, :original)
 
-      expect { definition_list.find(:example) }.
-        to raise_error(Payload::UndefinedDependencyError)
+      expect { defined.add(:example, :replacement) }.
+        to raise_error(Payload::DependencyAlreadyDefinedError)
+    end
+
+    it 'does not mutate the list' do
+      resolver = double('resolver')
+      definition_list = Payload::DefinitionList.new
+
+      definition_list.add(:example, resolver)
+
+      expect(definition_list.find(:example)).
+        to eq(Payload::UndefinedDefinition.new(:example))
+    end
+  end
+
+  describe '#decorate' do
+    it 'replaces a dependency with a decorated version' do
+      resolver = double('resolver')
+      decorator = double('decorator')
+      decorated = Payload::Definition.new(resolver).decorate(decorator)
+      definition_list = Payload::DefinitionList.new
+
+      defined = definition_list.
+        add(:example, resolver).
+        decorate(:example, decorator)
+
+      expect(defined.find(:example)).to eq(decorated)
+    end
+
+    it 'decorates an undefined dependency' do
+      resolver = double('resolver')
+      decorator = double('decorator')
+      decorated = Payload::Definition.new(resolver).decorate(decorator)
+      definition_list = Payload::DefinitionList.new
+
+      defined = definition_list.
+        decorate(:example, decorator).
+        add(:example, resolver)
+
+      expect(defined.find(:example)).to eq(decorated)
+    end
+
+    it 'does not mutate the list' do
+      resolver = double('resolver')
+      decorator = double('decorator')
+      definition = Payload::Definition.new(resolver)
+      definition_list = Payload::DefinitionList.new
+
+      defined = definition_list.
+        add(:example, resolver)
+
+      defined.decorate(:example, decorator)
+
+      expect(defined.find(:example)).to eq(definition)
     end
   end
 
@@ -30,23 +82,21 @@ describe Payload::DefinitionList do
         add(:one, 'first').
         add(:two, 'second').
         add(:three, 'third')
-      first_exported = double('exported_first')
-      allow(Payload::ExportedDefinition).
-        to receive(:new).
-        with('first', definition_list).
-        and_return(first_exported)
-      second_exported = double('exported_second')
-      allow(Payload::ExportedDefinition).
-        to receive(:new).
-        with('second', definition_list).
-        and_return(second_exported)
 
       exported = definition_list.export([:one, :two])
 
-      expect(exported.find(:one)).to eq(first_exported)
-      expect(exported.find(:two)).to eq(second_exported)
-      expect { exported.find(:three) }.
-        to raise_error(Payload::UndefinedDependencyError)
+      first = Payload::ExportedDefinition.new(
+        Payload::Definition.new('first'),
+        definition_list
+      )
+      second = Payload::ExportedDefinition.new(
+        Payload::Definition.new('second'),
+        definition_list
+      )
+      third = Payload::UndefinedDefinition.new(:three)
+      expect(exported.find(:one)).to eq(first)
+      expect(exported.find(:two)).to eq(second)
+      expect(exported.find(:three)).to eq(third)
     end
   end
 
@@ -56,23 +106,24 @@ describe Payload::DefinitionList do
       right = Payload::DefinitionList.new.add(:two, 'second')
       merged = left.import(right)
 
-      expect(merged.find(:one)).to eq('first')
-      expect(merged.find(:two)).to eq('second')
+      expect(merged.find(:one)).to eq(Payload::Definition.new('first'))
+      expect(merged.find(:two)).to eq(Payload::Definition.new('second'))
     end
   end
 
   describe '#find' do
-    it 'raises for an unknown definition' do
+    it 'returns an unknown definition' do
       definition_list = Payload::DefinitionList.new
 
-      expect { definition_list.find(:example) }.
-        to raise_error(Payload::UndefinedDependencyError)
+      expect(definition_list.find(:example)).
+        to eq(Payload::UndefinedDefinition.new(:example))
     end
 
     it 'returns an existing definition' do
-      definition = double('definition')
+      resolver = double('resolver')
+      definition = Payload::Definition.new(resolver)
       definition_list =
-        Payload::DefinitionList.new.add(:example, definition)
+        Payload::DefinitionList.new.add(:example, resolver)
 
       expect(definition_list.find(:example)).to eq(definition)
     end

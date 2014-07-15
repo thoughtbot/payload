@@ -1,5 +1,4 @@
 require 'payload/definition_list'
-require 'payload/definition'
 require 'payload/factory_resolver'
 require 'payload/service_resolver'
 
@@ -26,8 +25,7 @@ module Payload
     # @yield [Container] the resolved container.
     # @yieldreturn the decorated instance.
     def decorate(dependency, &block)
-      decorated = @definitions.find(dependency).decorate(block)
-      add dependency, decorated
+      self.class.new(@definitions.decorate(dependency, block))
     end
 
     # Defines a factory which can be used to instantiate the dependency. Useful
@@ -89,12 +87,7 @@ module Payload
 
     # @api private
     def define(dependency, resolver)
-      add dependency, Definition.new(resolver)
-    end
-
-    # @api private
-    def add(dependency, definition)
-      self.class.new(@definitions.add(dependency, definition))
+      self.class.new(@definitions.add(dependency, resolver))
     end
   end
 end

@@ -1,5 +1,6 @@
+require 'payload/definition'
 require 'payload/exported_definition'
-require 'payload/undefined_dependency_error'
+require 'payload/undefined_definition'
 
 module Payload
   # Immutable list of definitions.
@@ -12,14 +13,18 @@ module Payload
       @definitions = definitions
     end
 
-    def add(name, definition)
-      self.class.new(definitions.merge(name => definition))
+    def add(name, resolver)
+      value = find(name).set(Definition.new(resolver))
+      self.class.new(definitions.merge(name => value))
     end
 
     def find(name)
-      definitions.fetch(name) do
-        raise(UndefinedDependencyError, "No definition for dependency: #{name}")
-      end
+      definitions.fetch(name) { UndefinedDefinition.new(name) }
+    end
+
+    def decorate(name, block)
+      decorated = find(name).decorate(block)
+      self.class.new(@definitions.merge(name => decorated))
     end
 
     def export(names)

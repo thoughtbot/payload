@@ -38,4 +38,35 @@ describe Payload::Definition do
       expect(resolver).to have_received(:resolve).with(container, decorated)
     end
   end
+
+  describe '#set' do
+    it 'raises an already defined error' do
+      service = Payload::Definition.new(double('resolver'))
+
+      expect { service.set(double('replacement')) }.
+        to raise_error(Payload::DependencyAlreadyDefinedError)
+    end
+  end
+
+  describe '#==' do
+    it 'is true with the same resolver and decorators' do
+      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
+        to eq(Payload::Definition.new(:resolver).decorate(:decorator))
+    end
+
+    it 'is false with a different resolver' do
+      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
+        not_to eq(Payload::Definition.new(:other_resolver).decorate(:decorator))
+    end
+
+    it 'is false with different decorators' do
+      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
+        not_to eq(Payload::Definition.new(:resolver).decorate(:other_decorator))
+    end
+
+    it 'is false with a non-definition' do
+      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
+        not_to eq(:other)
+    end
+  end
 end

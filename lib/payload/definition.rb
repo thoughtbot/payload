@@ -1,4 +1,5 @@
 require 'payload/decorator_chain'
+require 'payload/dependency_already_defined_error'
 
 module Payload
   # Definition for a dependency which can be resolved and decorated.
@@ -14,11 +15,25 @@ module Payload
     end
 
     def resolve(container)
-      @resolver.resolve(container, @decorators)
+      resolver.resolve(container, decorators)
     end
 
     def decorate(decorator)
-      self.class.new @resolver, @decorators.add(decorator)
+      self.class.new resolver, decorators.add(decorator)
     end
+
+    def set(_)
+      raise DependencyAlreadyDefinedError
+    end
+
+    def ==(other)
+      other.is_a?(Definition) &&
+        resolver == other.resolver &&
+        decorators == other.decorators
+    end
+
+    protected
+
+    attr_reader :resolver, :decorators
   end
 end

@@ -68,10 +68,18 @@ describe Payload::Container do
       expect(original[:example]).to eq('expected component')
     end
 
+    it 'decorates a dependency which is defined later' do
+      container = build_container.
+        decorate(:example) { |component, _| "decorated #{component}" }.
+        service(:example) { |_| 'expected component' }
+
+      expect(container[:example]).to eq('decorated expected component')
+    end
+
     it 'raises an exception for an unknown dependency' do
       container = build_container
 
-      expect { container.decorate(:anything) }
+      expect { container.decorate(:undefined)[:undefined] }
         .to raise_error(Payload::UndefinedDependencyError)
     end
   end
@@ -127,8 +135,8 @@ describe Payload::Container do
         Payload::ServiceResolver.new(lambda { |config| 'two' })
       definitions = Payload::DefinitionList.
         new.
-        add(:one, Payload::Definition.new(first_export)).
-        add(:two, Payload::Definition.new(second_export))
+        add(:one, first_export).
+        add(:two, second_export)
       container = build_container.
         service(:original) { |config| 'original' }.
         import(definitions)

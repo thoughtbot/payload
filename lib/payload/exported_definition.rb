@@ -13,7 +13,17 @@ module Payload
     end
 
     def resolve(container)
-      @definition.resolve(container.import(@private_definitions))
+      definition.resolve(container.import(private_definitions))
     end
+
+    def ==(other)
+      other.is_a?(ExportedDefinition) &&
+        definition == other.definition &&
+        private_definitions == other.private_definitions
+    end
+
+    protected
+
+    attr_reader :definition, :private_definitions
   end
 end
