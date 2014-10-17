@@ -159,4 +159,35 @@ describe Payload::Container do
       end
     end
   end
+
+  describe "#new" do
+    context "with a service" do
+      it "returns the instance" do
+        container = build_container
+          .service(:example) { |config| 'expected result' }
+
+        expect(container.new(:example)).to eq('expected result')
+      end
+    end
+
+    context "with a factory" do
+      it "instantiates the factory" do
+        container = build_container
+          .factory(:example) { |config| 'expected result' }
+
+        expect(container.new(:example)).to eq('expected result')
+      end
+    end
+
+    context "with an undefined dependency" do
+      it "raises an error" do
+        container = build_container
+
+        expect { container.new(:undefined) }.to raise_error(
+          Payload::UndefinedDependencyError,
+          'No definition for dependency: undefined'
+        )
+      end
+    end
+  end
 end

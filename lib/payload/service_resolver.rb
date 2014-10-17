@@ -13,5 +13,9 @@ module Payload
       base = @block.call(container)
       decorators.decorate(base, container)
     end
+
+    def new(*args)
+      resolve(*args)
+    end
   end
 end

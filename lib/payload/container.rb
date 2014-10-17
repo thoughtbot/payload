@@ -61,6 +61,10 @@ module Payload
       @definitions.find(dependency).resolve(self)
     end
 
+    def new(dependency)
+      @definitions.find(dependency).new(self)
+    end
+
     # Exports dependencies which can be imported into another container.
     #
     # Used internally by {MutableContainer}. Use {MutableContainer#export}.

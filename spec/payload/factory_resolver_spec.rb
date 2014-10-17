@@ -9,14 +9,33 @@ describe Payload::FactoryResolver do
       container = double('container')
       decorators = double('decorators')
       definition = Payload::FactoryResolver.new(block)
-      Payload::Factory.
-        stub(:new).
+      allow(Payload::Factory).
+        to receive(:new).
         with(container, block, decorators).
         and_return(factory)
 
       result = definition.resolve(container, decorators)
 
       expect(result).to eq(factory)
+    end
+  end
+
+  describe "#new" do
+    it "instantiates an instance from the factory" do
+      instance = double("instance")
+      block = double("block")
+      factory = double("factory", new: instance)
+      container = double("container")
+      decorators = double("decorators")
+      definition = Payload::FactoryResolver.new(block)
+      allow(Payload::Factory).
+        to receive(:new).
+        with(container, block, decorators).
+        and_return(factory)
+
+      result = definition.new(container, decorators)
+
+      expect(result).to eq(instance)
     end
   end
 end

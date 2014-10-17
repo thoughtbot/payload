@@ -20,6 +20,10 @@ module Payload
       raise UndefinedDependencyError, "No definition for dependency: #{name}"
     end
 
+    def new(container)
+      resolve(container)
+    end
+
     def decorate(block)
       self.class.new(@name, @decorators.add(block))
     end

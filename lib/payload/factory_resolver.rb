@@ -14,5 +14,9 @@ module Payload
     def resolve(container, decorators)
       Factory.new(container, @block, decorators)
     end
+
+    def new(container, decorators)
+      resolve(container, decorators).new
+    end
   end
 end

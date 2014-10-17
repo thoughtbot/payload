@@ -19,6 +19,10 @@ module Payload
       resolver.resolve(container, decorators)
     end
 
+    def new(container)
+      resolver.new(container, decorators)
+    end
+
     def decorate(decorator)
       self.class.new name, resolver, decorators.add(decorator)
     end

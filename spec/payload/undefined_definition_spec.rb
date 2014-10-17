@@ -34,12 +34,21 @@ describe Payload::UndefinedDefinition do
     end
   end
 
+  describe "#new" do
+    it "raises an undefined dependency error" do
+      definition = Payload::UndefinedDefinition.new(:name)
+
+      expect { definition.new(double("conatainer")) }.
+        to raise_error(Payload::UndefinedDependencyError, /name/)
+    end
+  end
+
   describe '#decorate' do
     it 'saves decorators for its replacement' do
       first = double('decorator_one')
       second = double('decorator_two')
       replacement = double('replacement')
-      replacement.stub(:decorate).and_return(replacement)
+      allow(replacement).to receive(:decorate).and_return(replacement)
       definition = Payload::UndefinedDefinition.new(:name)
 
       defined = definition.
