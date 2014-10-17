@@ -5,7 +5,7 @@ describe Payload::DefinitionList do
   describe '#add' do
     it 'adds a dependency to be found later' do
       resolver = double('resolver')
-      definition = Payload::Definition.new(resolver)
+      definition = Payload::Definition.new(:example, resolver)
       definition_list = Payload::DefinitionList.new
 
       defined = definition_list.add(:example, resolver)
@@ -37,7 +37,8 @@ describe Payload::DefinitionList do
     it 'replaces a dependency with a decorated version' do
       resolver = double('resolver')
       decorator = double('decorator')
-      decorated = Payload::Definition.new(resolver).decorate(decorator)
+      decorated =
+        Payload::Definition.new(:example, resolver).decorate(decorator)
       definition_list = Payload::DefinitionList.new
 
       defined = definition_list.
@@ -50,7 +51,8 @@ describe Payload::DefinitionList do
     it 'decorates an undefined dependency' do
       resolver = double('resolver')
       decorator = double('decorator')
-      decorated = Payload::Definition.new(resolver).decorate(decorator)
+      decorated =
+        Payload::Definition.new(:example, resolver).decorate(decorator)
       definition_list = Payload::DefinitionList.new
 
       defined = definition_list.
@@ -63,11 +65,10 @@ describe Payload::DefinitionList do
     it 'does not mutate the list' do
       resolver = double('resolver')
       decorator = double('decorator')
-      definition = Payload::Definition.new(resolver)
+      definition = Payload::Definition.new(:example, resolver)
       definition_list = Payload::DefinitionList.new
 
-      defined = definition_list.
-        add(:example, resolver)
+      defined = definition_list.add(:example, resolver)
 
       defined.decorate(:example, decorator)
 
@@ -86,11 +87,11 @@ describe Payload::DefinitionList do
       exported = definition_list.export([:one, :two])
 
       first = Payload::ExportedDefinition.new(
-        Payload::Definition.new('first'),
+        Payload::Definition.new(:one, 'first'),
         definition_list
       )
       second = Payload::ExportedDefinition.new(
-        Payload::Definition.new('second'),
+        Payload::Definition.new(:two, 'second'),
         definition_list
       )
       third = Payload::UndefinedDefinition.new(:three)
@@ -106,8 +107,8 @@ describe Payload::DefinitionList do
       right = Payload::DefinitionList.new.add(:two, 'second')
       merged = left.import(right)
 
-      expect(merged.find(:one)).to eq(Payload::Definition.new('first'))
-      expect(merged.find(:two)).to eq(Payload::Definition.new('second'))
+      expect(merged.find(:one)).to eq(Payload::Definition.new(:one, 'first'))
+      expect(merged.find(:two)).to eq(Payload::Definition.new(:two, 'second'))
     end
   end
 
@@ -121,7 +122,7 @@ describe Payload::DefinitionList do
 
     it 'returns an existing definition' do
       resolver = double('resolver')
-      definition = Payload::Definition.new(resolver)
+      definition = Payload::Definition.new(:example, resolver)
       definition_list =
         Payload::DefinitionList.new.add(:example, resolver)
 

@@ -9,7 +9,7 @@ describe Payload::Definition do
       container = double('container')
       decorators = double('decorators')
       resolver.stub(:resolve).and_return(resolved)
-      definition = Payload::Definition.new(resolver, decorators)
+      definition = Payload::Definition.new(:example, resolver, decorators)
 
       result = definition.resolve(container)
 
@@ -28,7 +28,7 @@ describe Payload::Definition do
       decorators = double('decorators')
       decorators.stub(:add).and_return(decorated)
       Payload::DecoratorChain.stub(:new).and_return(decorators)
-      definition = Payload::Definition.new(resolver)
+      definition = Payload::Definition.new(:name, resolver)
 
       definition.
         decorate(decorator).
@@ -41,31 +41,38 @@ describe Payload::Definition do
 
   describe '#set' do
     it 'raises an already defined error' do
-      service = Payload::Definition.new(double('resolver'))
+      service = Payload::Definition.new(:name, double('resolver'))
 
-      expect { service.set(double('replacement')) }.
-        to raise_error(Payload::DependencyAlreadyDefinedError)
+      expect { service.set(double('replacement')) }.to raise_error(
+        Payload::DependencyAlreadyDefinedError,
+        "name is already defined"
+      )
     end
   end
 
   describe '#==' do
     it 'is true with the same resolver and decorators' do
-      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
-        to eq(Payload::Definition.new(:resolver).decorate(:decorator))
+      expect(Payload::Definition.new(:name, :resolver).decorate(:decorator)).
+        to eq(Payload::Definition.new(:name, :resolver).decorate(:decorator))
+    end
+
+    it 'is false with a different name' do
+      expect(Payload::Definition.new(:name, :resolver)).
+        not_to eq(Payload::Definition.new(:other, :resolver))
     end
 
     it 'is false with a different resolver' do
-      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
-        not_to eq(Payload::Definition.new(:other_resolver).decorate(:decorator))
+      expect(Payload::Definition.new(:name, :resolver).decorate(:decorator)).
+        not_to eq(Payload::Definition.new(:name, :other).decorate(:decorator))
     end
 
     it 'is false with different decorators' do
-      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
-        not_to eq(Payload::Definition.new(:resolver).decorate(:other_decorator))
+      expect(Payload::Definition.new(:name, :resolver).decorate(:decorator)).
+        not_to eq(Payload::Definition.new(:name, :resolver).decorate(:other))
     end
 
     it 'is false with a non-definition' do
-      expect(Payload::Definition.new(:resolver).decorate(:decorator)).
+      expect(Payload::Definition.new(:name, :resolver).decorate(:decorator)).
         not_to eq(:other)
     end
   end

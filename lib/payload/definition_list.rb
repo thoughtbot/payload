@@ -14,7 +14,7 @@ module Payload
     end
 
     def add(name, resolver)
-      value = find(name).set(Definition.new(resolver))
+      value = find(name).set(Definition.new(name, resolver))
       self.class.new(definitions.merge(name => value))
     end
 

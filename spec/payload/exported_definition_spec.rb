@@ -19,7 +19,7 @@ describe Payload::ExportedDefinition do
         add(:private, private_definition)
       container = build_container.service(:container) { |config| 'container' }
       definition =
-        Payload::Definition.new(Payload::ServiceResolver.new(block))
+        Payload::Definition.new(:name, Payload::ServiceResolver.new(block))
       exported_definition =
         Payload::ExportedDefinition.new(definition, private_definitions)
 

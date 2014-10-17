@@ -9,7 +9,8 @@ module Payload
   #
   # @api private
   class Definition
-    def initialize(resolver, decorators = DecoratorChain.new)
+    def initialize(name, resolver, decorators = DecoratorChain.new)
+      @name = name
       @resolver = resolver
       @decorators = decorators
     end
@@ -19,21 +20,22 @@ module Payload
     end
 
     def decorate(decorator)
-      self.class.new resolver, decorators.add(decorator)
+      self.class.new name, resolver, decorators.add(decorator)
     end
 
     def set(_)
-      raise DependencyAlreadyDefinedError
+      raise DependencyAlreadyDefinedError, "#{name} is already defined"
     end
 
     def ==(other)
       other.is_a?(Definition) &&
+        name == other.name &&
         resolver == other.resolver &&
         decorators == other.decorators
     end
 
     protected
 
-    attr_reader :resolver, :decorators
+    attr_reader :name, :resolver, :decorators
   end
 end
