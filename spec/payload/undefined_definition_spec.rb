@@ -39,7 +39,7 @@ describe Payload::UndefinedDefinition do
       first = double('decorator_one')
       second = double('decorator_two')
       replacement = double('replacement')
-      replacement.stub(:decorate).and_return(replacement)
+      allow(replacement).to receive(:decorate).and_return(replacement)
       definition = Payload::UndefinedDefinition.new(:name)
 
       defined = definition.

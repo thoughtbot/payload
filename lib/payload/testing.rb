@@ -26,7 +26,7 @@ module Payload
     def stub_factory_instance(dependency, attributes)
       factory = stub_factory(dependency)
       double(dependency.to_s).tap do |double|
-        factory.stub(:new).with(attributes).and_return(double)
+        allow(factory).to receive(:new).with(attributes).and_return(double)
       end
     end
 

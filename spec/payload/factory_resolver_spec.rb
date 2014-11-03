@@ -9,8 +9,8 @@ describe Payload::FactoryResolver do
       container = double('container')
       decorators = double('decorators')
       definition = Payload::FactoryResolver.new(block)
-      Payload::Factory.
-        stub(:new).
+      allow(Payload::Factory).
+        to receive(:new).
         with(container, block, decorators).
         and_return(factory)
 

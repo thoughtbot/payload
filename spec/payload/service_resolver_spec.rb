@@ -8,8 +8,8 @@ describe Payload::ServiceResolver do
       container = { dependency: dependency }
       decorated = double('decorated')
       decorators = double('decorators')
-      decorators.
-        stub(:decorate).
+      allow(decorators).
+        to receive(:decorate).
         with(dependency, container).
         and_return(decorated)
       block = lambda { |yielded| yielded[:dependency] }

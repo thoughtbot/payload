@@ -8,7 +8,7 @@ describe Payload::Definition do
       resolver = double('resolver')
       container = double('container')
       decorators = double('decorators')
-      resolver.stub(:resolve).and_return(resolved)
+      allow(resolver).to receive(:resolve).and_return(resolved)
       definition = Payload::Definition.new(:example, resolver, decorators)
 
       result = definition.resolve(container)
@@ -22,12 +22,12 @@ describe Payload::Definition do
     it 'returns a new decorated service' do
       decorator = double('first_decorator')
       resolver = double('resolver')
-      resolver.stub(:resolve)
+      allow(resolver).to receive(:resolve)
       container = double('container')
       decorated = double('decorated')
       decorators = double('decorators')
-      decorators.stub(:add).and_return(decorated)
-      Payload::DecoratorChain.stub(:new).and_return(decorators)
+      allow(decorators).to receive(:add).and_return(decorated)
+      allow(Payload::DecoratorChain).to receive(:new).and_return(decorators)
       definition = Payload::Definition.new(:name, resolver)
 
       definition.
