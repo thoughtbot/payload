@@ -1,0 +1,7 @@
+addons:
+  code_climate:
+    repo_token: adbc28d8c3bd765fc6aa418515aa036b275608c9d42a2326d3133b1231f14741
+
+rvm:
+  - 2.0.0
+  - 2.1.0
