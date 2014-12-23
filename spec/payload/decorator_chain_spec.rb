@@ -6,28 +6,42 @@ describe Payload::DecoratorChain do
     expect(Payload::DecoratorChain.new).to be_a(Enumerable)
   end
 
-  describe '#decorate' do
-    it 'applies a series of decorators to a component' do
-      chain = Payload::DecoratorChain
-        .new
-        .add(lambda { |base, config| "Decorated #{base} with #{config[:one]}" })
-        .add(lambda { |base, config| "#{base} and #{config[:two]}" })
+  describe "#decorate" do
+    it "applies a series of decorators to a component" do
+      chain = Payload::DecoratorChain.
+        new.
+        add(lambda { |base, config| "Decorated #{base} with #{config[:one]}" }).
+        add(lambda { |base, config| "#{base} and #{config[:two]}" })
 
-      result = chain.decorate('original', one: 'one', two: 'two')
+      result = chain.decorate("original", one: "one", two: "two")
 
-      expect(result).to eq('Decorated original with one and two')
+      expect(result).to eq("Decorated original with one and two")
+    end
+
+    it "applies a decorator with extra arguments" do
+      block = lambda do |base, config, extra|
+        "Decorated #{base} with #{config[:one]} and #{extra}"
+      end
+
+      chain = Payload::DecoratorChain.
+        new.
+        add(block)
+
+      result = chain.decorate("original", { one: "one", two: "two" }, "extra")
+
+      expect(result).to eq("Decorated original with one and extra")
     end
 
     it "doesn't mutate" do
-      chain = Payload::DecoratorChain
-        .new
-        .add(lambda { |base, config| "Decorated #{base}" })
+      chain = Payload::DecoratorChain.
+        new.
+        add(lambda { |base, config| "Decorated #{base}" })
 
-      chain.add(lambda { |base, config| 'Unreferenced decorator' })
+      chain.add(lambda { |base, config| "Unreferenced decorator" })
 
-      result = chain.decorate('original', {})
+      result = chain.decorate("original", {})
 
-      expect(result).to eq('Decorated original')
+      expect(result).to eq("Decorated original")
     end
   end
 

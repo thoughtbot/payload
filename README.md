@@ -71,8 +71,8 @@ from controllers entirely.
 In `config/dependencies.rb`:
 
 ```ruby
-factory :payment do |container|
-  Payment.new(container[:attributes], container[:payment_client])
+factory :payment do |container, attributes|
+  Payment.new(attributes, container[:payment_client])
 end
 ```
 
@@ -81,7 +81,7 @@ In `app/controllers/payments_controller.rb`:
 ```ruby
 class PaymentsController < ApplicationController
   def create
-    payment = dependencies[:payment].new(attributes: params[:payment])
+    payment = dependencies[:payment].new(params[:payment])
     payment.process
     redirect_to payment
   end
@@ -95,7 +95,7 @@ describe PaymentsController do
   describe '#create' do
     it 'processes a payment' do
       payment_params = { product_id: '123', amount: '25' }
-      payment = stub_factory_instance(:payment, attributes: payment_params)
+      payment = stub_factory_instance(:payment, payment_params)
 
       post :create, payment_params
 
@@ -151,13 +151,13 @@ Use the `factory` method to define dependencies which require dependencies from
 the container as well as runtime state which varies per-request:
 
 ```ruby
-factory :payment do |container|
-  Payment.new(container[:attributes], container[:payment_client])
+factory :payment do |container, attributes|
+  Payment.new(attributes, container[:payment_client])
 end
 ```
 
-The container for factory definitions contains all dependencies defined on the
-container as well as dependencies provided when instantiating the factory.
+Any additional arguments passed to `new` when instantiating the factory will
+also be passed to the factory definition block.
 
 Use the `decorate` method to extend or replace a previously defined dependency:
 
@@ -193,15 +193,15 @@ Use `new` to instantiate dependencies from factories:
 ```ruby
 class PaymentsController < ApplicationController
   def create
-    payment = dependencies[:payment].new(attributes: params[:payment])
+    payment = dependencies[:payment].new(params[:payment])
     payment.process
     redirect_to payment
   end
 end
 ```
 
-The `new` method accepts a `Hash`. Each element of the `Hash` will be accessible
-from the container in `factory` definitions.
+All arguments to the `new` method will be passed to the factory definition
+block.
 
 Grouping Dependencies
 ---------------------
@@ -222,8 +222,8 @@ service :payment_notifier do |container|
   PaymentNotifier.new(container[:mailer])
 end
 
-factory :payment do |container|
-  Payment.new(container[:attributes], container[:payment_client])
+factory :payment do |container, attributes|
+  Payment.new(attributes, container[:payment_client])
 end
 
 decorate :payment do |payment, container|

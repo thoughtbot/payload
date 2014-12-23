@@ -5,17 +5,17 @@ require 'payload/testing'
 describe Payload::Container do
   include Payload::Testing
 
-  describe '#factory' do
-    it 'returns an object that responds to new' do
-      container = build_container
-        .service(:from_container) { |config| 'From container' }
-        .factory(:example) do |config|
-          "#{config[:from_new]} and #{config[:from_container]}"
+  describe "#factory" do
+    it "returns an object that responds to new" do
+      container = build_container.
+        service(:from_container) { |config| "From container" }.
+        factory(:example) do |config, from_new|
+          "#{from_new} and #{config[:from_container]}"
         end
 
-      result = container[:example].new(from_new: 'From new')
+      result = container[:example].new("From new")
 
-      expect(result).to eq('From new and From container')
+      expect(result).to eq("From new and From container")
     end
   end
 

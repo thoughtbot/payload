@@ -16,9 +16,9 @@ module Payload
       self.class.new decorators + [decorator]
     end
 
-    def decorate(base, container)
+    def decorate(base, container, *extra)
       decorators.inject(base) do |component, decorator|
-        decorator.call(component, container)
+        decorator.call(component, container, *extra)
       end
     end
 
