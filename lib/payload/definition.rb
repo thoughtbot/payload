@@ -5,7 +5,7 @@ module Payload
   # Definition for a dependency which can be resolved and decorated.
   #
   # Used internally by {DefinitionList}. Use {Container#service} or
-  # {Container#fatory}.
+  # {Container#factory}.
   #
   # @api private
   class Definition

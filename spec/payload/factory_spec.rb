@@ -1,12 +1,12 @@
-require 'spec_helper'
-require 'payload/factory'
-require 'payload/decorator_chain'
-require 'payload/testing'
+require "spec_helper"
+require "payload/factory"
+require "payload/decorator_chain"
+require "payload/testing"
 
 describe Payload::Factory do
   include Payload::Testing
 
-  describe '#new' do
+  describe "#new" do
     it "instantiates the dependency" do
       decorator = lambda do |component, config, from_new|
         "Decorated #{component.inspect}" \
@@ -38,6 +38,19 @@ describe Payload::Factory do
       result = factory.new
 
       expect(result).to eq("Component with From container")
+    end
+  end
+
+  describe "#apply" do
+    it "applies arguments" do
+      container = build_container
+      block = lambda { |config, applied, local| "Got #{applied} and #{local}" }
+      decorators = Payload::DecoratorChain.new
+      factory = Payload::Factory.new(container, block, decorators)
+
+      result = factory.apply("applied").new("local")
+
+      expect(result).to eq("Got applied and local")
     end
   end
 end

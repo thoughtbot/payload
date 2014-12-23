@@ -1,3 +1,5 @@
+require "payload/partial_instance"
+
 module Payload
   # Returned by {Container#[]} for {Container#factory} definitions.
   #
@@ -22,6 +24,27 @@ module Payload
     def new(*arguments)
       base = @block.call(@container, *arguments)
       @decorators.decorate(base, @container, *arguments)
+    end
+
+    # Return a new factory with some of the arguments provided. Remaining
+    # arguments can be provided by invoking {Factory#new} on the returned
+    # instance. Chaining {Factory#apply} is also possible. This can be useful
+    # for returning a factory where some of the dependencies are provided by the
+    # container, and the remainder are provided at runtime.
+    #
+    # @example
+    #   container = Payload::Container.new.
+    #     factory(:form) { |container, model, attributes|
+    #       Form.new(model, attributes)
+    #     }.
+    #     service(:user_form) { |container| container[:form].apply(User) }
+    #   user_form = container[:user_form].new(username: "smith")
+    # @param [Array] arguments positional arguments to be passed to the factory
+    # @param [Hash] keywords keyword arguments to be passed to the factory
+    # @return [PartialInstance] an instance on which you can invoke
+    #   {Factory#new}.
+    def apply(*arguments, **keywords)
+      PartialInstance.new(self).apply(*arguments, **keywords)
     end
   end
 end
