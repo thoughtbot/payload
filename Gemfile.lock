@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    payload (0.2.2)
+    payload (0.3.0)
 
 GEM
   remote: https://rubygems.org/
