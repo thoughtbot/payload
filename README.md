@@ -1,5 +1,13 @@
 # Payload
 
+## DEPRECATED
+
+This was a useful experiment for [Upcase Exercises], but no real interest ever
+developed within the company, so there is no reason to publish this as an
+independent library. This library is unlikely to be maintained or expanded
+beyond the needs of Upcase, so it's recommended that you avoid using it unless
+you would like to maintain it yourself.
+
 Payload is a lightweight framework for specifying, injecting, and using
 dependencies in Ruby on Rails applications. It facilitates run-time assembly of
 dependencies and makes it plausible to use [inversion of control] beyond the
